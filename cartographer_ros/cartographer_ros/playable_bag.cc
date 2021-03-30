@@ -23,11 +23,7 @@
 
 namespace cartographer_ros {
 
-PlayableBag::PlayableBag(
-    const std::string& bag_filename, const int bag_id,
-    const ros::Time start_time, const ros::Time end_time,
-    const ros::Duration buffer_delay,
-    FilteringEarlyMessageHandler filtering_early_message_handler)
+PlayableBag::PlayableBag( const std::string& bag_filename, const int bag_id, const ros::Time start_time, const ros::Time end_time, const ros::Duration buffer_delay, FilteringEarlyMessageHandler filtering_early_message_handler)
     : bag_(absl::make_unique<rosbag::Bag>(bag_filename, rosbag::bagmode::Read)),
       view_(absl::make_unique<rosbag::View>(*bag_, start_time, end_time)),
       view_iterator_(view_->begin()),

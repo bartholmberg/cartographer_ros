@@ -46,6 +46,7 @@ find_package(PCL REQUIRED COMPONENTS common)
 
 find_package(cartographer REQUIRED)
 include("${CARTOGRAPHER_CMAKE_DIR}/functions.cmake")
+message( STATUS "============>cartographer cmake dir:   ${CARTOGRAPHER_CMAKE_DIR}" )
 option(BUILD_GRPC "build features that require Cartographer gRPC support" false)
 google_initialize_cartographer_project()
 google_enable_testing()

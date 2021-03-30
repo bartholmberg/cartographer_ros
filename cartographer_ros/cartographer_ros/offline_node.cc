@@ -211,40 +211,39 @@ void RunOfflineNode(const MapBuilderFactory& map_builder_factory) {
       }
       bag_topic_to_sensor_id[bag_resolved_topic] = expected_sensor_id;
     }
+    // BAH, 3/24.  Pull out the lamda from PlayableBag constructor ( was confusing)
+    // PlayableBag::FilteringEarlyMessageHandler is used to get an early
+    // peek at the tf messages in the bag and insert them into 'tf_buffer'.
+    // When a message is retrieved by GetNextMessage() further below,
+    // we will have already inserted further 'kDelay' seconds worth of
+    // transforms into 'tf_buffer' via this lambda.
+    auto insertTFBuffer = [&tf_publisher, &tf_buffer](const rosbag::MessageInstance& msg) {
+      if (msg.isType<tf2_msgs::TFMessage>()) {
+        if (FLAGS_use_bag_transforms) {
+          const auto tf_message = msg.instantiate<tf2_msgs::TFMessage>();
+          tf_publisher.publish(tf_message);
 
-    playable_bag_multiplexer.AddPlayableBag(PlayableBag(
-        bag_filename, current_bag_index, ros::TIME_MIN, ros::TIME_MAX, kDelay,
-        // PlayableBag::FilteringEarlyMessageHandler is used to get an early
-        // peek at the tf messages in the bag and insert them into 'tf_buffer'.
-        // When a message is retrieved by GetNextMessage() further below,
-        // we will have already inserted further 'kDelay' seconds worth of
-        // transforms into 'tf_buffer' via this lambda.
-        [&tf_publisher, &tf_buffer](const rosbag::MessageInstance& msg) {
-          if (msg.isType<tf2_msgs::TFMessage>()) {
-            if (FLAGS_use_bag_transforms) {
-              const auto tf_message = msg.instantiate<tf2_msgs::TFMessage>();
-              tf_publisher.publish(tf_message);
-
-              for (const auto& transform : tf_message->transforms) {
-                try {
-                  // We need to keep 'tf_buffer' small because it becomes very
-                  // inefficient otherwise. We make sure that tf_messages are
-                  // published before any data messages, so that tf lookups
-                  // always work.
-                  tf_buffer.setTransform(transform, "unused_authority",
-                                         msg.getTopic() == kTfStaticTopic);
-                } catch (const tf2::TransformException& ex) {
-                  LOG(WARNING) << ex.what();
-                }
-              }
+          for (const auto& transform : tf_message->transforms) {
+            try {
+              // We need to keep 'tf_buffer' small because it becomes very
+              // inefficient otherwise. We make sure that tf_messages are
+              // published before any data messages, so that tf lookups
+              // always work.
+              tf_buffer.setTransform(transform, "unused_authority",
+                                     msg.getTopic() == kTfStaticTopic);
+            } catch (const tf2::TransformException& ex) {
+              LOG(WARNING) << ex.what();
             }
-            // Tell 'PlayableBag' to filter the tf message since there is no
-            // further use for it.
-            return false;
-          } else {
-            return true;
           }
-        }));
+        }
+        // Tell 'PlayableBag' to filter the tf message since there is no
+        // further use for it.
+        return false;
+      } else {
+        return true;
+      }
+    };
+    playable_bag_multiplexer.AddPlayableBag( PlayableBag(bag_filename, current_bag_index, ros::TIME_MIN, ros::TIME_MAX, kDelay, insertTFBuffer));
   }
 
   std::set<std::string> bag_topics;
