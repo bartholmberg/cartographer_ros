@@ -9,7 +9,7 @@ Licensed under the MIT License.
         <arg name="depth_enabled"     value="true" />
         <arg name="depth_mode"        value="NFOV_2X2BINNED" />
         <arg name="color_enabled"     value="false" />
-        <arg name="fps"               value="30" />
+        <arg name="fps"               value="5" />
         <arg name="point_cloud"       value="true" />
         <arg name="rgb_point_cloud"   value="false" />
         <arg name="required"          value="true" />

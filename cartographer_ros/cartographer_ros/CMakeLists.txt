@@ -18,7 +18,7 @@ google_binary(cartographer_assets_writer
     ros_map_writing_points_processor.h
     ros_map_writing_points_processor.cc
 )
-
+message( STATUS "*********>>>>>>> catkin package lib: ${CATKIN_PACKAGE_LIB_DESTINATION}")
 install(TARGETS cartographer_assets_writer
   ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
   LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}

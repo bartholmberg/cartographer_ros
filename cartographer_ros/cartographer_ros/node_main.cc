@@ -93,7 +93,7 @@ int main(int argc, char** argv) {
 
   ::ros::init(argc, argv, "cartographer_node");
   ::ros::start();
-
+  //"amanaplanacanal"
   cartographer_ros::ScopedRosLogSink ros_log_sink;
   cartographer_ros::Run();
   ::ros::shutdown();
