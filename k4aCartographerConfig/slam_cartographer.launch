@@ -8,10 +8,11 @@ Licensed under the MIT License.
     <include file="$(find azure_kinect_ros_driver)/launch/driver.launch">
         <arg name="depth_enabled"     value="true" />
         <arg name="depth_mode"        value="NFOV_2X2BINNED" />
-        <arg name="color_enabled"     value="false" />
+        <arg name="color_enabled"     value="true" />
         <arg name="fps"               value="5" />
         <arg name="point_cloud"       value="true" />
         <arg name="rgb_point_cloud"   value="false" />
+		<arg name="imu_rate_target" value="1600"/>
         <arg name="required"          value="true" />
     </include>
 
